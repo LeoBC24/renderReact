@@ -1,9 +1,12 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const path = require('path')
 const app = express()
 
 app.use(cors())
+
+app.use(express.static(path.join(__dirname, 'dist')))
 
 app.use(express.json())
 
@@ -44,10 +47,16 @@ let persons = [
       "id": "4",
       "name": "Mary Poppendieck", 
       "number": "39-23-6423122"
+    },
+    { 
+      "id": "5",
+      "name": "Leonardo Lastname", 
+      "number": "12-34-56789"
     }
 ]
 
-// GET
+
+// GET Home
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
@@ -123,6 +132,9 @@ app.post('/api/persons', (request, response) => {
   response.json(person)
 })
 
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+})
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
