@@ -1,20 +1,28 @@
+const Person = require('./models/person')
 const mongoose = require('mongoose')
+require('dotenv').config()  // Load environment variables
 
-// Get the password from command-line arguments
-const password = process.argv[2]
+// Get password from command-line arguments or environment variable
+const password = process.argv[2] || process.env.MONGO_PASSWORD
+const username = process.env.MONGO_USERNAME || 'LeoFullStack'
 
-// Your MongoDB connection string (update <username> and cluster)
-const url = `mongodb+srv://LeoFullStack:${password}@phonebook.oyndo8t.mongodb.net/phonebookApp?retryWrites=true&w=majority&appName=Phonebook`
+// If password is missing, show an error
+if (!password) {
+  console.log('Error: Please provide the MongoDB password either as a command-line argument or in the .env file.')
+  process.exit(1)
+}
+
+// MongoDB URI (you can also pass username and password via environment variables)
+const url = `mongodb+srv://${username}:${password}@phonebook.oyndo8t.mongodb.net/phonebookApp?retryWrites=true&w=majority`
 
 mongoose.set('strictQuery', false)
 mongoose.connect(url)
-
-const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-})
-
-const Person = mongoose.model('Person', personSchema)
+  .then(() => {
+    console.log('Connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('Error connecting to MongoDB:', error.message)
+  })
 
 // ADD PERSON: If 5 arguments: node mongo.js password "Name" "Number"
 if (process.argv.length === 5) {
