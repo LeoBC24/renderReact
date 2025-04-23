@@ -1,4 +1,5 @@
 require('dotenv').config();  // This should be at the top, before you use process.env
+
 const Person = require('./models/person');
 const express = require('express');
 const morgan = require('morgan');
