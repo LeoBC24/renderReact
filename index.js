@@ -1,5 +1,6 @@
 require('dotenv').config();  // This should be at the top, before you use process.env
 
+const errorHandler = require('./middleware/errorHandler')
 const Person = require('./models/person');
 const express = require('express');
 const morgan = require('morgan');
@@ -111,22 +112,31 @@ app.post('/api/persons', async (req, res, next) => {
   }
 });
 
-const errorHandler = (error, req, res, next) => {
-  console.error('Error name:', error.name);
-  console.error('Error message:', error.message);
-  console.error('Error stack:', error.stack);
+// PUT - update existing person
+app.put('/api/persons/:id', async (req, res, next) => {
+  const { name, number } = req.body;
 
-  if (error.name === 'CastError') {
-    return res.status(400).send({ error: 'malformatted id' });
-  } else if (error.name === 'ValidationError') {
-    return res.status(400).json({ error: error.message });
+  if (!name || !number) {
+    return res.status(400).json({ error: 'Name and number are required' });
   }
 
-  return res.status(500).json({ error: 'Internal server error' });
-};
+  try {
+    const updatedPerson = await Person.findByIdAndUpdate(
+      req.params.id,
+      { name, number },
+      { new: true, runValidators: true, context: 'query' }
+    );
 
+    if (updatedPerson) {
+      res.json(updatedPerson);
+    } else {
+      res.status(404).json({ error: 'Person not found' });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
-app.use(errorHandler);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
@@ -136,3 +146,5 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+app.use(errorHandler);
