@@ -73,10 +73,24 @@ app.get('/api/persons/:id', (req, res, next) => {
 // DELETE person by id
 
 app.delete('/api/persons/:id', (req, res, next) => {
-  Person.findByIdAndRemove(req.params.id)
-    .then(() => res.status(204).end())
+  const id = req.params.id;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: 'Invalid ID format' });
+  }
+
+  Person.findByIdAndDelete(id)
+    .then(result => {
+      if (result) {
+        res.status(204).end();
+      } else {
+        res.status(404).json({ error: 'Person not found' });
+      }
+    })
     .catch(error => next(error));
 });
+
+
 
 // POST
 
