@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 require('dotenv').config()  // Load environment variables
 
 // Get MongoDB credentials from environment variables
-const username = process.env.MONGO_USERNAME || 'LeoFullStack'
+const username = process.env.MONGO_USERNAME
 const password = process.env.MONGO_PASSWORD
 
 // Check if password is provided
@@ -13,16 +13,18 @@ if (!password) {
 }
 
 // MongoDB URI construction
-const url = `mongodb+srv://${username}:${password}@phonebook.oyndo8t.mongodb.net/phonebookApp?retryWrites=true&w=majority`
+// MongoDB URI construction
+const url = `mongodb+srv://${username}:${password}@hobbly-database.uzsnr5u.mongodb.net/hobbly-database?retryWrites=true&w=majority&appName=hobbly-database`
 
 mongoose.set('strictQuery', false)
 mongoose.connect(url)
   .then(() => {
-    console.log('Connected to MongoDB')
+    console.log('✅ Connected to MongoDB')
   })
   .catch((error) => {
-    console.error('Error connecting to MongoDB:', error.message)
+    console.error('❌ Error connecting to MongoDB:', error.message)
   })
+
 
 // ADD PERSON: If 5 arguments: node mongo.js "Name" "Number"
 if (process.argv.length === 5) {

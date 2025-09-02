@@ -10,7 +10,8 @@ const app = express()
 const mongoose = require('mongoose')
 
 // MongoDB connection URL
-const url = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@phonebook.oyndo8t.mongodb.net/phonebookApp?retryWrites=true&w=majority`
+const url = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_CLUSTER}/${process.env.MONGO_DB}?retryWrites=true&w=majority&appName=${process.env.MONGO_DB}`
+
 
 mongoose.set('strictQuery', false)
 mongoose.connect(url)
